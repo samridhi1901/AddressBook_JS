@@ -116,6 +116,26 @@ class AddressBook {
             console.log(`${index + 1}. ${contact.displayContact()}`);
         });
     }
+
+    searchByCity(city) {
+        let results = this.contacts.filter(contact => contact.city.toLowerCase() === city.toLowerCase());
+        this.displaySearchResults(results, `City: ${city}`);
+    }
+
+    searchByState(state) {
+        let results = this.contacts.filter(contact => contact.state.toLowerCase() === state.toLowerCase());
+        this.displaySearchResults(results, `State: ${state}`);
+    }
+
+    displaySearchResults(results, criteria) {
+        if (results.length === 0) {
+            console.log(`🔍 No contacts found for ${criteria}.`);
+            return;
+        }
+
+        console.log(`🔍 Contacts found for ${criteria}:`);
+        results.map(contact => console.log(contact.displayContact()));
+    }
 }
 
 // ✅ Example Usage
@@ -133,16 +153,24 @@ try {
     );
 
     let contact3 = new AddressBookContact(
-        "Samridhi", "Singh", "789 Lane", "Mumbai", "Maharashtra",
-        "400001", "9123456789", "samridhi.singh@example.com"
-    ); // Duplicate Name - Should not be added
+        "Amit", "Sharma", "789 Lane", "Orai", "Uttar Pradesh",
+        "400001", "9123456789", "amit.sharma@example.com"
+    );
 
     addressBook.addContact(contact1);
     addressBook.addContact(contact2);
-    addressBook.addContact(contact3); // ❌ Duplicate Name Error
+    addressBook.addContact(contact3);
 
     // Display total number of contacts
     console.log(`\n📊 Total Contacts: ${addressBook.countContacts()}`);
+
+    // Search by city
+    console.log("\n🏙️ Searching for contacts in Orai...");
+    addressBook.searchByCity("Orai");
+
+    // Search by state
+    console.log("\n🗺️ Searching for contacts in Uttar Pradesh...");
+    addressBook.searchByState("Uttar Pradesh");
 
     // Delete a contact
     console.log("\n🗑️ Deleting John's Contact...");
