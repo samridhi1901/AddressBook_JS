@@ -76,12 +76,3 @@ try {
     console.error("❌ Error:", error.message);
 }
 
-// ❌ Example Usage with Invalid Data (Uncomment to test)
-// try {
-//     const contact2 = new AddressBookContact(
-//         "sarthak", "rastogi", "123", "Mrt", "UP", "A400088", "123456789", "invalid-email"
-//     );
-//     console.log(contact2.displayContact());
-// } catch (error) {
-//     console.error("❌ Error:", error.message);
-// }
