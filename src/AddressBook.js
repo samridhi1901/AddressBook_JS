@@ -1,55 +1,20 @@
 class AddressBookContact {
     constructor(firstName, lastName, address, city, state, zip, phone, email) {
-        this.firstName = this.validateName(firstName, "First Name");
-        this.lastName = this.validateName(lastName, "Last Name");
-        this.address = this.validateAddress(address, "Address");
-        this.city = this.validateAddress(city, "City");
-        this.state = this.validateAddress(state, "State");
-        this.zip = this.validateZip(zip);
-        this.phone = this.validatePhone(phone);
-        this.email = this.validateEmail(email);
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.address = address;
+        this.city = city;
+        this.state = state;
+        this.zip = zip;
+        this.phone = phone;
+        this.email = email;
     }
 
-    validateName(name, fieldName) {
-        const namePattern = /^[A-Z][a-zA-Z]{2,}$/;
-        if (!namePattern.test(name)) {
-            throw new Error(`${fieldName} must start with a capital letter and have at least 3 characters.`);
-        }
-        return name;
+    getFullName() {
+        return `${this.firstName} ${this.lastName}`;
     }
 
-    validateAddress(value, fieldName) {
-        if (value.length < 4) {
-            throw new Error(`${fieldName} must have at least 4 characters.`);
-        }
-        return value;
-    }
-
-    validateZip(zip) {
-        const zipPattern = /^[1-9][0-9]{5}$/;
-        if (!zipPattern.test(zip)) {
-            throw new Error("Invalid ZIP code. It must be a 6-digit number.");
-        }
-        return zip;
-    }
-
-    validatePhone(phone) {
-        const phonePattern = /^[6-9][0-9]{9}$/;
-        if (!phonePattern.test(phone)) {
-            throw new Error("Invalid phone number. It must be 10 digits starting with 6-9.");
-        }
-        return phone;
-    }
-
-    validateEmail(email) {
-        const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        if (!emailPattern.test(email)) {
-            throw new Error("Invalid email format.");
-        }
-        return email;
-    }
-
-    displayContact() {
+    toString() {
         return `${this.firstName} ${this.lastName} | ${this.address}, ${this.city}, ${this.state} - ${this.zip} | Phone: ${this.phone} | Email: ${this.email}`;
     }
 }
@@ -60,13 +25,10 @@ class AddressBook {
     }
 
     addContact(contact) {
-        let isDuplicate = this.contacts
-            .filter(c => c.firstName.toLowerCase() === contact.firstName.toLowerCase() &&
-                         c.lastName.toLowerCase() === contact.lastName.toLowerCase())
-            .length > 0;
+        let isDuplicate = this.contacts.some(c => c.getFullName().toLowerCase() === contact.getFullName().toLowerCase());
 
         if (isDuplicate) {
-            console.log(`Contact '${contact.firstName} ${contact.lastName}' already exists!`);
+            console.log(`Contact '${contact.getFullName()}' already exists!`);
             return;
         }
 
@@ -79,96 +41,58 @@ class AddressBook {
             console.log("Address Book is empty!");
             return;
         }
-        console.log(`Address Book Contacts (Total: ${this.contacts.length})`);
-        this.contacts.forEach((contact, index) => {
-            console.log(`${index + 1}. ${contact.displayContact()}`);
-        });
+        console.log("\nAddress Book Contacts:");
+        this.contacts.forEach(contact => console.log(contact.toString()));
     }
 
-    viewPersonsByCity() {
-        let groupedByCity = this.contacts.reduce((acc, contact) => {
-            if (!acc[contact.city]) acc[contact.city] = [];
-            acc[contact.city].push(contact.displayContact());
-            return acc;
-        }, {});
-
-        console.log("\nPersons Grouped by City:");
-        Object.entries(groupedByCity).forEach(([city, persons]) => {
-            console.log(`${city}:`);
-            persons.map(person => console.log(`   - ${person}`));
-        });
+    sortContactsByName() {
+        this.contacts.sort((a, b) => a.getFullName().localeCompare(b.getFullName()));
+        console.log("\nContacts Sorted Alphabetically by Name:");
+        this.displayContacts();
     }
 
-    viewPersonsByState() {
-        let groupedByState = this.contacts.reduce((acc, contact) => {
-            if (!acc[contact.state]) acc[contact.state] = [];
-            acc[contact.state].push(contact.displayContact());
-            return acc;
-        }, {});
-
-        console.log("\nPersons Grouped by State:");
-        Object.entries(groupedByState).forEach(([state, persons]) => {
-            console.log(`${state}:`);
-            persons.map(person => console.log(`   - ${person}`));
-        });
+    findContactsByCity(city) {
+        return this.contacts.filter(contact => contact.city.toLowerCase() === city.toLowerCase());
     }
 
-    countByCity() {
-        let cityCount = this.contacts.reduce((acc, contact) => {
+    findContactsByState(state) {
+        return this.contacts.filter(contact => contact.state.toLowerCase() === state.toLowerCase());
+    }
+
+    countContactsByCity() {
+        return this.contacts.reduce((acc, contact) => {
             acc[contact.city] = (acc[contact.city] || 0) + 1;
             return acc;
         }, {});
-
-        console.log("\nContact Count by City:");
-        Object.entries(cityCount).forEach(([city, count]) => {
-            console.log(`${city}: ${count}`);
-        });
     }
 
-    countByState() {
-        let stateCount = this.contacts.reduce((acc, contact) => {
+    countContactsByState() {
+        return this.contacts.reduce((acc, contact) => {
             acc[contact.state] = (acc[contact.state] || 0) + 1;
             return acc;
         }, {});
-
-        console.log("\nContact Count by State:");
-        Object.entries(stateCount).forEach(([state, count]) => {
-            console.log(`${state}: ${count}`);
-        });
     }
 }
 
 // Example Usage
-try {
-    let addressBook = new AddressBook();
+let addressBook = new AddressBook();
 
-    let contact1 = new AddressBookContact(
-        "Samridhi", "Singh", "123 Street", "Orai", "Uttar Pradesh",
-        "250002", "9876543210", "samridhi@example.com"
-    );
+let contact1 = new AddressBookContact("Samridhi", "Singh", "123 Street", "Orai", "Uttar Pradesh", "250002", "9876543210", "samridhi@example.com");
+let contact2 = new AddressBookContact("John", "Doe", "456 Avenue", "Delhi", "Delhi", "110001", "9988776655", "john.doe@example.com");
+let contact3 = new AddressBookContact("Jane", "Doe", "789 Road", "Orai", "Uttar Pradesh", "250003", "9123456789", "jane.doe@example.com");
 
-    let contact2 = new AddressBookContact(
-        "John", "Doe", "456 Avenue", "Delhi", "Delhi",
-        "110001", "9988776655", "john.doe@example.com"
-    );
+addressBook.addContact(contact1);
+addressBook.addContact(contact2);
+addressBook.addContact(contact3);
 
-    let contact3 = new AddressBookContact(
-        "Jane", "Doe", "789 Road", "Orai", "Uttar Pradesh",
-        "250003", "9123456789", "jane.doe@example.com"
-    );
+addressBook.displayContacts();
+addressBook.sortContactsByName();
 
-    addressBook.addContact(contact1);
-    addressBook.addContact(contact2);
-    addressBook.addContact(contact3);
+console.log("\nContacts in Orai:");
+console.log(addressBook.findContactsByCity("Orai").map(contact => contact.toString()));
 
-    console.log("\nTotal Contacts: ", addressBook.contacts.length);
+console.log("\nContacts in Uttar Pradesh:");
+console.log(addressBook.findContactsByState("Uttar Pradesh").map(contact => contact.toString()));
 
-    addressBook.viewPersonsByCity();
-    addressBook.viewPersonsByState();
-
-    addressBook.countByCity();
-    addressBook.countByState();
-
-} catch (error) {
-    console.error("Error:", error.message);
-}
+console.log("\nNumber of Contacts by City:", addressBook.countContactsByCity());
+console.log("\nNumber of Contacts by State:", addressBook.countContactsByState());
