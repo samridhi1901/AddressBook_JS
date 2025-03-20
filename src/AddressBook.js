@@ -49,14 +49,6 @@ class AddressBookContact {
         return email;
     }
 
-    updateDetails(updates) {
-        Object.keys(updates).forEach(key => {
-            if (this[key] !== undefined) {
-                this[key] = updates[key];
-            }
-        });
-    }
-
     displayContact() {
         return `Name: ${this.firstName} ${this.lastName} | Address: ${this.address}, ${this.city}, ${this.state} - ${this.zip} | Phone: ${this.phone} | Email: ${this.email}`;
     }
@@ -80,18 +72,14 @@ class AddressBook {
         return this.contacts.find(contact => contact.firstName === name || contact.lastName === name);
     }
 
-    editContact(name, updates) {
-        let contact = this.findContact(name);
-        if (!contact) {
+    deleteContact(name) {
+        const index = this.contacts.findIndex(contact => contact.firstName === name || contact.lastName === name);
+        if (index === -1) {
             console.log(`❌ Contact with name '${name}' not found!`);
             return;
         }
-        try {
-            contact.updateDetails(updates);
-            console.log("✅ Contact updated successfully!");
-        } catch (error) {
-            console.error("❌ Error updating contact:", error.message);
-        }
+        this.contacts.splice(index, 1);
+        console.log(`✅ Contact '${name}' deleted successfully!`);
     }
 
     displayContacts() {
@@ -124,13 +112,13 @@ try {
     addressBook.addContact(contact1);
     addressBook.addContact(contact2);
 
-    // Edit contact details
-    console.log("\n🔄 Updating John's Address...");
-    addressBook.editContact("John", { address: "789 Boulevard", city: "Mumbai", zip: "400001" });
+    // Delete a contact
+    console.log("\n🗑️ Deleting John's Contact...");
+    addressBook.deleteContact("John");
 
-    // ❌ Attempting to update a non-existing contact
-    console.log("\n🔄 Updating a Non-Existing Contact...");
-    addressBook.editContact("Alice", { phone: "9123456789" });
+    // ❌ Attempting to delete a non-existing contact
+    console.log("\n🗑️ Deleting a Non-Existing Contact...");
+    addressBook.deleteContact("Alice");
 
     // Display updated contacts
     addressBook.displayContacts();
