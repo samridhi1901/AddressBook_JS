@@ -1,6 +1,5 @@
 class AddressBookContact {
     constructor(firstName, lastName, address, city, state, zip, phone, email) {
-        // Validation before assignment
         this.firstName = this.validateName(firstName, "First Name");
         this.lastName = this.validateName(lastName, "Last Name");
         this.address = this.validateAddress(address, "Address");
@@ -11,7 +10,6 @@ class AddressBookContact {
         this.email = this.validateEmail(email);
     }
 
-    // Validate Name (First and Last)
     validateName(name, fieldName) {
         const namePattern = /^[A-Z][a-zA-Z]{2,}$/;
         if (!namePattern.test(name)) {
@@ -20,7 +18,6 @@ class AddressBookContact {
         return name;
     }
 
-    // Validate Address, City, and State
     validateAddress(value, fieldName) {
         if (value.length < 4) {
             throw new Error(`${fieldName} must have at least 4 characters.`);
@@ -28,7 +25,6 @@ class AddressBookContact {
         return value;
     }
 
-    // Validate Zip Code (Numeric, 6 digits)
     validateZip(zip) {
         const zipPattern = /^[1-9][0-9]{5}$/;
         if (!zipPattern.test(zip)) {
@@ -37,7 +33,6 @@ class AddressBookContact {
         return zip;
     }
 
-    // Validate Phone Number (Country Code + 10 digits)
     validatePhone(phone) {
         const phonePattern = /^[6-9][0-9]{9}$/;
         if (!phonePattern.test(phone)) {
@@ -46,7 +41,6 @@ class AddressBookContact {
         return phone;
     }
 
-    // Validate Email
     validateEmail(email) {
         const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         if (!emailPattern.test(email)) {
@@ -55,24 +49,63 @@ class AddressBookContact {
         return email;
     }
 
-    // Display Contact Details
     displayContact() {
-        return `
-        Name: ${this.firstName} ${this.lastName}
-        Address: ${this.address}, ${this.city}, ${this.state} - ${this.zip}
-        Phone: ${this.phone}
-        Email: ${this.email}`;
+        return `Name: ${this.firstName} ${this.lastName} | Address: ${this.address}, ${this.city}, ${this.state} - ${this.zip} | Phone: ${this.phone} | Email: ${this.email}`;
     }
 }
 
-// ✅ Example Usage with Valid Data
+// ✅ Creating Address Book Array
+class AddressBook {
+    constructor() {
+        this.contacts = [];
+    }
+
+    // Add a new contact to the Address Book
+    addContact(contact) {
+        if (this.contacts.some(c => c.email === contact.email)) {
+            console.log(`❌ Contact with email ${contact.email} already exists!`);
+            return;
+        }
+        this.contacts.push(contact);
+        console.log("✅ Contact added successfully!");
+    }
+
+    // Display all contacts
+    displayContacts() {
+        if (this.contacts.length === 0) {
+            console.log("📂 Address Book is empty!");
+            return;
+        }
+        console.log("📜 Address Book Contacts:");
+        this.contacts.forEach((contact, index) => {
+            console.log(`${index + 1}. ${contact.displayContact()}`);
+        });
+    }
+}
+
+// ✅ Example Usage
 try {
-    const contact1 = new AddressBookContact(
-        "Samridhi", "Singh", "123 Street", "Orai", "Uttar Pradesh",
+    let addressBook = new AddressBook();
+
+    let contact1 = new AddressBookContact(
+       "Samridhi", "Singh", "123 Street", "Orai", "Uttar Pradesh",
         "250002", "9876543210", "samridhi@example.com"
     );
-    console.log(contact1.displayContact());
+
+    let contact2 = new AddressBookContact(
+        "John", "Doe", "456 Avenue", "Delhi", "Delhi",
+        "110001", "9988776655", "john.doe@example.com"
+    );
+
+    addressBook.addContact(contact1);
+    addressBook.addContact(contact2);
+
+    // ❌ Attempting to add duplicate contact (should fail)
+    addressBook.addContact(contact1);
+
+    // Display all contacts
+    addressBook.displayContacts();
+
 } catch (error) {
     console.error("❌ Error:", error.message);
 }
-
