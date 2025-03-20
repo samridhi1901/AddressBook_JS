@@ -50,7 +50,7 @@ class AddressBookContact {
     }
 
     displayContact() {
-        return `Name: ${this.firstName} ${this.lastName} | Address: ${this.address}, ${this.city}, ${this.state} - ${this.zip} | Phone: ${this.phone} | Email: ${this.email}`;
+        return `${this.firstName} ${this.lastName} | ${this.address}, ${this.city}, ${this.state} - ${this.zip} | 📞 ${this.phone} | ✉️ ${this.email}`;
     }
 }
 
@@ -60,7 +60,6 @@ class AddressBook {
     }
 
     addContact(contact) {
-        // Check for duplicate entry using filter()
         let isDuplicate = this.contacts
             .filter(c => c.firstName.toLowerCase() === contact.firstName.toLowerCase() &&
                          c.lastName.toLowerCase() === contact.lastName.toLowerCase())
@@ -75,66 +74,43 @@ class AddressBook {
         console.log("✅ Contact added successfully!");
     }
 
-    findContact(name) {
-        return this.contacts.find(contact =>
-            contact.firstName.toLowerCase() === name.toLowerCase() ||
-            contact.lastName.toLowerCase() === name.toLowerCase()
-        );
-    }
-
-    deleteContact(name) {
-        const index = this.contacts.findIndex(contact =>
-            contact.firstName.toLowerCase() === name.toLowerCase() ||
-            contact.lastName.toLowerCase() === name.toLowerCase()
-        );
-
-        if (index === -1) {
-            console.log(`❌ Contact with name '${name}' not found!`);
-            return;
-        }
-
-        this.contacts.splice(index, 1);
-        console.log(`✅ Contact '${name}' deleted successfully!`);
-    }
-
-    countContacts() {
-        return this.contacts.length;
-    }
-
-    sortContacts() {
-        this.contacts.sort((a, b) => a.firstName.localeCompare(b.firstName));
-    }
-
     displayContacts() {
         if (this.contacts.length === 0) {
             console.log("📂 Address Book is empty!");
             return;
         }
-        this.sortContacts();
-        console.log(`📜 Address Book Contacts (Total: ${this.countContacts()})`);
+        console.log(`📜 Address Book Contacts (Total: ${this.contacts.length})`);
         this.contacts.forEach((contact, index) => {
             console.log(`${index + 1}. ${contact.displayContact()}`);
         });
     }
 
-    searchByCity(city) {
-        let results = this.contacts.filter(contact => contact.city.toLowerCase() === city.toLowerCase());
-        this.displaySearchResults(results, `City: ${city}`);
+    viewPersonsByCity() {
+        let groupedByCity = this.contacts.reduce((acc, contact) => {
+            if (!acc[contact.city]) acc[contact.city] = [];
+            acc[contact.city].push(contact.displayContact());
+            return acc;
+        }, {});
+
+        console.log("\n🏙️ Persons Grouped by City:");
+        Object.entries(groupedByCity).forEach(([city, persons]) => {
+            console.log(`📌 ${city}:`);
+            persons.map(person => console.log(`   - ${person}`));
+        });
     }
 
-    searchByState(state) {
-        let results = this.contacts.filter(contact => contact.state.toLowerCase() === state.toLowerCase());
-        this.displaySearchResults(results, `State: ${state}`);
-    }
+    viewPersonsByState() {
+        let groupedByState = this.contacts.reduce((acc, contact) => {
+            if (!acc[contact.state]) acc[contact.state] = [];
+            acc[contact.state].push(contact.displayContact());
+            return acc;
+        }, {});
 
-    displaySearchResults(results, criteria) {
-        if (results.length === 0) {
-            console.log(`🔍 No contacts found for ${criteria}.`);
-            return;
-        }
-
-        console.log(`🔍 Contacts found for ${criteria}:`);
-        results.map(contact => console.log(contact.displayContact()));
+        console.log("\n🗺️ Persons Grouped by State:");
+        Object.entries(groupedByState).forEach(([state, persons]) => {
+            console.log(`📌 ${state}:`);
+            persons.map(person => console.log(`   - ${person}`));
+        });
     }
 }
 
@@ -157,30 +133,27 @@ try {
         "400001", "9123456789", "amit.sharma@example.com"
     );
 
+    let contact4 = new AddressBookContact(
+        "Neha", "Verma", "101 Block", "Lucknow", "Uttar Pradesh",
+        "226001", "9321456789", "neha.verma@example.com"
+    );
+
     addressBook.addContact(contact1);
     addressBook.addContact(contact2);
     addressBook.addContact(contact3);
+    addressBook.addContact(contact4);
 
-    // Display total number of contacts
-    console.log(`\n📊 Total Contacts: ${addressBook.countContacts()}`);
-
-    // Search by city
-    console.log("\n🏙️ Searching for contacts in Orai...");
-    addressBook.searchByCity("Orai");
-
-    // Search by state
-    console.log("\n🗺️ Searching for contacts in Uttar Pradesh...");
-    addressBook.searchByState("Uttar Pradesh");
-
-    // Delete a contact
-    console.log("\n🗑️ Deleting John's Contact...");
-    addressBook.deleteContact("John");
-
-    // Display updated contacts
+    // Display all contacts
+    console.log("\n📖 Displaying All Contacts:");
     addressBook.displayContacts();
 
-    // Show updated count
-    console.log(`\n📊 Updated Total Contacts: ${addressBook.countContacts()}`);
+    // View persons grouped by city
+    console.log("\n📊 Viewing Persons Grouped by City:");
+    addressBook.viewPersonsByCity();
+
+    // View persons grouped by state
+    console.log("\n📊 Viewing Persons Grouped by State:");
+    addressBook.viewPersonsByState();
 
 } catch (error) {
     console.error("❌ Error:", error.message);
