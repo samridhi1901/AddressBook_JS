@@ -82,12 +82,16 @@ class AddressBook {
         console.log(`✅ Contact '${name}' deleted successfully!`);
     }
 
+    countContacts() {
+        return this.contacts.length;
+    }
+
     displayContacts() {
         if (this.contacts.length === 0) {
             console.log("📂 Address Book is empty!");
             return;
         }
-        console.log("📜 Address Book Contacts:");
+        console.log(`📜 Address Book Contacts (Total: ${this.countContacts()})`);
         this.contacts.forEach((contact, index) => {
             console.log(`${index + 1}. ${contact.displayContact()}`);
         });
@@ -101,7 +105,6 @@ try {
     let contact1 = new AddressBookContact(
         "Samridhi", "Singh", "123 Street", "Orai", "Uttar Pradesh",
         "250002", "9876543210", "samridhi@example.com"
-
     );
 
     let contact2 = new AddressBookContact(
@@ -112,16 +115,18 @@ try {
     addressBook.addContact(contact1);
     addressBook.addContact(contact2);
 
+    // Display total number of contacts
+    console.log(`\n📊 Total Contacts: ${addressBook.countContacts()}`);
+
     // Delete a contact
     console.log("\n🗑️ Deleting John's Contact...");
     addressBook.deleteContact("John");
 
-    // ❌ Attempting to delete a non-existing contact
-    console.log("\n🗑️ Deleting a Non-Existing Contact...");
-    addressBook.deleteContact("Alice");
-
     // Display updated contacts
     addressBook.displayContacts();
+
+    // Show updated count
+    console.log(`\n📊 Updated Total Contacts: ${addressBook.countContacts()}`);
 
 } catch (error) {
     console.error("❌ Error:", error.message);
