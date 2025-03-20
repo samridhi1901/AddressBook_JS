@@ -49,18 +49,24 @@ class AddressBookContact {
         return email;
     }
 
+    updateDetails(updates) {
+        Object.keys(updates).forEach(key => {
+            if (this[key] !== undefined) {
+                this[key] = updates[key];
+            }
+        });
+    }
+
     displayContact() {
         return `Name: ${this.firstName} ${this.lastName} | Address: ${this.address}, ${this.city}, ${this.state} - ${this.zip} | Phone: ${this.phone} | Email: ${this.email}`;
     }
 }
 
-// ✅ Creating Address Book Array
 class AddressBook {
     constructor() {
         this.contacts = [];
     }
 
-    // Add a new contact to the Address Book
     addContact(contact) {
         if (this.contacts.some(c => c.email === contact.email)) {
             console.log(`❌ Contact with email ${contact.email} already exists!`);
@@ -70,7 +76,24 @@ class AddressBook {
         console.log("✅ Contact added successfully!");
     }
 
-    // Display all contacts
+    findContact(name) {
+        return this.contacts.find(contact => contact.firstName === name || contact.lastName === name);
+    }
+
+    editContact(name, updates) {
+        let contact = this.findContact(name);
+        if (!contact) {
+            console.log(`❌ Contact with name '${name}' not found!`);
+            return;
+        }
+        try {
+            contact.updateDetails(updates);
+            console.log("✅ Contact updated successfully!");
+        } catch (error) {
+            console.error("❌ Error updating contact:", error.message);
+        }
+    }
+
     displayContacts() {
         if (this.contacts.length === 0) {
             console.log("📂 Address Book is empty!");
@@ -88,8 +111,9 @@ try {
     let addressBook = new AddressBook();
 
     let contact1 = new AddressBookContact(
-       "Samridhi", "Singh", "123 Street", "Orai", "Uttar Pradesh",
+        "Samridhi", "Singh", "123 Street", "Orai", "Uttar Pradesh",
         "250002", "9876543210", "samridhi@example.com"
+
     );
 
     let contact2 = new AddressBookContact(
@@ -100,10 +124,15 @@ try {
     addressBook.addContact(contact1);
     addressBook.addContact(contact2);
 
-    // ❌ Attempting to add duplicate contact (should fail)
-    addressBook.addContact(contact1);
+    // Edit contact details
+    console.log("\n🔄 Updating John's Address...");
+    addressBook.editContact("John", { address: "789 Boulevard", city: "Mumbai", zip: "400001" });
 
-    // Display all contacts
+    // ❌ Attempting to update a non-existing contact
+    console.log("\n🔄 Updating a Non-Existing Contact...");
+    addressBook.editContact("Alice", { phone: "9123456789" });
+
+    // Display updated contacts
     addressBook.displayContacts();
 
 } catch (error) {
