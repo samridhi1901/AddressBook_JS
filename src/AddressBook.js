@@ -50,7 +50,7 @@ class AddressBookContact {
     }
 
     displayContact() {
-        return `${this.firstName} ${this.lastName} | ${this.address}, ${this.city}, ${this.state} - ${this.zip} | 📞 ${this.phone} | ✉️ ${this.email}`;
+        return `${this.firstName} ${this.lastName} | ${this.address}, ${this.city}, ${this.state} - ${this.zip} | Phone: ${this.phone} | Email: ${this.email}`;
     }
 }
 
@@ -66,20 +66,20 @@ class AddressBook {
             .length > 0;
 
         if (isDuplicate) {
-            console.log(`❌ Contact '${contact.firstName} ${contact.lastName}' already exists!`);
+            console.log(`Contact '${contact.firstName} ${contact.lastName}' already exists!`);
             return;
         }
 
         this.contacts.push(contact);
-        console.log("✅ Contact added successfully!");
+        console.log("Contact added successfully!");
     }
 
     displayContacts() {
         if (this.contacts.length === 0) {
-            console.log("📂 Address Book is empty!");
+            console.log("Address Book is empty!");
             return;
         }
-        console.log(`📜 Address Book Contacts (Total: ${this.contacts.length})`);
+        console.log(`Address Book Contacts (Total: ${this.contacts.length})`);
         this.contacts.forEach((contact, index) => {
             console.log(`${index + 1}. ${contact.displayContact()}`);
         });
@@ -92,9 +92,9 @@ class AddressBook {
             return acc;
         }, {});
 
-        console.log("\n🏙️ Persons Grouped by City:");
+        console.log("\nPersons Grouped by City:");
         Object.entries(groupedByCity).forEach(([city, persons]) => {
-            console.log(`📌 ${city}:`);
+            console.log(`${city}:`);
             persons.map(person => console.log(`   - ${person}`));
         });
     }
@@ -106,15 +106,39 @@ class AddressBook {
             return acc;
         }, {});
 
-        console.log("\n🗺️ Persons Grouped by State:");
+        console.log("\nPersons Grouped by State:");
         Object.entries(groupedByState).forEach(([state, persons]) => {
-            console.log(`📌 ${state}:`);
+            console.log(`${state}:`);
             persons.map(person => console.log(`   - ${person}`));
+        });
+    }
+
+    countByCity() {
+        let cityCount = this.contacts.reduce((acc, contact) => {
+            acc[contact.city] = (acc[contact.city] || 0) + 1;
+            return acc;
+        }, {});
+
+        console.log("\nContact Count by City:");
+        Object.entries(cityCount).forEach(([city, count]) => {
+            console.log(`${city}: ${count}`);
+        });
+    }
+
+    countByState() {
+        let stateCount = this.contacts.reduce((acc, contact) => {
+            acc[contact.state] = (acc[contact.state] || 0) + 1;
+            return acc;
+        }, {});
+
+        console.log("\nContact Count by State:");
+        Object.entries(stateCount).forEach(([state, count]) => {
+            console.log(`${state}: ${count}`);
         });
     }
 }
 
-// ✅ Example Usage
+// Example Usage
 try {
     let addressBook = new AddressBook();
 
@@ -129,32 +153,22 @@ try {
     );
 
     let contact3 = new AddressBookContact(
-        "Amit", "Sharma", "789 Lane", "Orai", "Uttar Pradesh",
-        "400001", "9123456789", "amit.sharma@example.com"
-    );
-
-    let contact4 = new AddressBookContact(
-        "Neha", "Verma", "101 Block", "Lucknow", "Uttar Pradesh",
-        "226001", "9321456789", "neha.verma@example.com"
+        "Jane", "Doe", "789 Road", "Orai", "Uttar Pradesh",
+        "250003", "9123456789", "jane.doe@example.com"
     );
 
     addressBook.addContact(contact1);
     addressBook.addContact(contact2);
     addressBook.addContact(contact3);
-    addressBook.addContact(contact4);
 
-    // Display all contacts
-    console.log("\n📖 Displaying All Contacts:");
-    addressBook.displayContacts();
+    console.log("\nTotal Contacts: ", addressBook.contacts.length);
 
-    // View persons grouped by city
-    console.log("\n📊 Viewing Persons Grouped by City:");
     addressBook.viewPersonsByCity();
-
-    // View persons grouped by state
-    console.log("\n📊 Viewing Persons Grouped by State:");
     addressBook.viewPersonsByState();
 
+    addressBook.countByCity();
+    addressBook.countByState();
+
 } catch (error) {
-    console.error("❌ Error:", error.message);
+    console.error("Error:", error.message);
 }
